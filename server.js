@@ -11,6 +11,9 @@ const fccTesting = require('./freeCodeCamp/fcctesting.js');
 
 const app = express();
 
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
 app.set('view engine', 'pug');
 app.set("views", "./views/pug");
 
@@ -44,8 +47,12 @@ myDB(async client => {
 });
 // app.listen out here...
 
+io.on("connection", socket => {
+  console.log("A user has connected")
+})
+
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+http.listen(PORT, () => {
   console.log('Listening on port ' + PORT);
 });
