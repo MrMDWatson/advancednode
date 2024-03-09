@@ -38,7 +38,7 @@ module.exports = function (app, myDataBase) {
   passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "https://advancednode.mrmdwatson.repl.co/auth/github/callback"
+    callbackURL: "https://65de46dd-a675-40bf-a2e7-32b6b1a45b51-00-2nj2sx8sa840j.janeway.replit.dev/auth/github/callback"
   },
     async (accessToken, refreshToken, profile, cb) => {
       console.log(profile);
