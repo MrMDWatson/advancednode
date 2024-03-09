@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const { ObjectID } = require('mongodb');
 
 module.exports = function (app, myDataBase) {
+  
   passport.serializeUser((user, done) => {
     done(null, user._id);
   });
@@ -37,7 +38,7 @@ module.exports = function (app, myDataBase) {
   passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/auth/github/callback"
+    callbackURL: "https://advancedcode.mrmdwatson.repl.co/auth/github/callback"
   },
     async (accessToken, refreshToken, profile, cb) => {
       console.log(profile);
