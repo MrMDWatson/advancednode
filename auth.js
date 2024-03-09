@@ -44,7 +44,7 @@ module.exports = function (app, myDataBase) {
       console.log(profile);
       //Database logic here with callback containing your user object
       try {
-        console.log(`User ${username} attempted to log in.`);
+        console.log(`User ${profile.username} attempted to log in.`);
         const user = await myDataBase.findOneAndUpdate(
           { id: profile.id },
           {
