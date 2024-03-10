@@ -3,7 +3,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const GitHubStrategy = require('passport-github').Strategy;
 const bcrypt = require("bcrypt");
-const { ObjectID } = require('mongodb');
+const ObjectID = require('mongodb').ObjectID;
 
 module.exports = function (app, myDataBase) {
 
@@ -21,7 +21,8 @@ module.exports = function (app, myDataBase) {
   });
 
 
-  passport.use(new LocalStrategy((username, password, done) => {
+  passport.use(new LocalStrategy(
+    (username, password, done) => {
     myDataBase.findOne({ username: username }, (err, user) => {
       console.log(`User ${username} attempted to log in.`);
       if (err) { return done(err); }
@@ -32,7 +33,7 @@ module.exports = function (app, myDataBase) {
       return done(null, user);
     });
   }));
-
+  /*
   passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
@@ -64,4 +65,5 @@ module.exports = function (app, myDataBase) {
       );
     }
   ));
+  */
 }

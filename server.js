@@ -50,7 +50,6 @@ io.use(
 );
 
 myDB(async client => {
-  
   const myDataBase = await client.db("boiler").collection("users");
   routes(app, myDataBase);
   auth(app, myDataBase);
@@ -64,6 +63,9 @@ myDB(async client => {
       username: socket.request.user.username,
       currentUsers,
       connected: true
+    });
+    socket.on('chat message', (message) => {
+      io.emit('chat message', { username: socket.request.user.username, message });
     });
     socket.on('disconnect', () => {
       /*anything you want to do on disconnect*/
@@ -87,7 +89,6 @@ myDB(async client => {
 
 function onAuthorizeSuccess(data, accept) {
   console.log('successful connection to socket.io');
-  console.log(data);
   accept(null, true);
 }
 
