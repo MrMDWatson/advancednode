@@ -32,6 +32,7 @@ module.exports = function (app, myDataBase) {
   })
 
   app.route("/chat").get(ensureAuthenticated, (req, res) => {
+    console.log(req.user);
     res.render("chat", {
       user: req.user
     })
@@ -45,7 +46,6 @@ module.exports = function (app, myDataBase) {
 
   app.route('/register').post(async (req, res, next) => {
     console.log("Attempting to register");
-    console.log(req.body);
     try {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(req.body.password, salt);

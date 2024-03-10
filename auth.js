@@ -8,17 +8,23 @@ const { ObjectID } = require('mongodb');
 module.exports = function (app, myDataBase) {
 
   passport.serializeUser((user, done) => {
+    console.log("Serialized user " + user);
     done(null, user._id);
   });
   
-  passport.deserializeUser((id, done) => {
-    const user = myDataBase.findOne({ _id: id });
-    if (!user) {
-      return console.error(err);
-    } else {
+  passport.deserializeUser(async (id, done) => {
+    try {
+      const user = await myDataBase.findOne({ _id: id });
+      if (!user) {
+        console.log("Could not deserialize ");
+      }
       done(null, user);
+    } catch(err) {
+      console.log(err);
     }
+    
   });
+
 
   passport.use(new LocalStrategy(async (username, password, done) => {
     try {
@@ -26,10 +32,12 @@ module.exports = function (app, myDataBase) {
       const user = await myDataBase.findOne({ username: username });
       if (!user) {return done(null, false);}  
       const passed = await bcrypt.compareSync(password, user.password);
-        if (!passed) { 
-          return done(null, false);
-        }
-        return done(null, user);
+      if (!passed) { 
+        console.log("Incorrect password entered");
+        return done(null, false);
+      }
+      console.log("Local auth successful");
+      return done(null, user);
     } catch (err) {
       console.log(err);
     }
@@ -45,8 +53,6 @@ module.exports = function (app, myDataBase) {
       //Database logic here with callback containing your user object
       try {
         console.log(`User ${profile.username} attempted to log in.`);
-        
-        
         const user = await myDataBase.findOneAndUpdate(
           { id: profile.id },
           {
@@ -70,10 +76,10 @@ module.exports = function (app, myDataBase) {
           },
           { upsert: true, new: true, returnDocument: "after" });
         if (!user) {
-          console.log("Error creating")
+          console.log("Error updating mongodb")
           return cb(null, false);
-        }  
-        
+        }
+        console.log("Git auth successful")
         return cb(null, user);
       } catch (err) {
         console.log(err);
