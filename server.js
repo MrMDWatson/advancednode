@@ -39,19 +39,27 @@ myDB(async client => {
   routes(app, myDataBase);
   auth(app, myDataBase);
 
+  let currentUsers = 0;
+
+  io.on("connection", socket => {
+    console.log("A user has connected");
+    ++currentUsers;
+    io.emit("user count", currentUsers);
+    socket.on('disconnect', () => {
+      /*anything you want to do on disconnect*/
+      --currentUsers;
+      io.emit("user count", currentUsers);
+    });
+  })
+
   // Be sure to add this...
 }).catch(e => {
   app.route('/').get((req, res) => {
     res.render('index', { title: e, message: 'Unable to connect to database' });
   });
 });
+
 // app.listen out here...
-
-io.on("connection", socket => {
-  console.log("A user has connected")
-})
-
-
 const PORT = process.env.PORT || 3000;
 http.listen(PORT, () => {
   console.log('Listening on port ' + PORT);
