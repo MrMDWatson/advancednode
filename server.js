@@ -4,21 +4,19 @@ const express = require('express');
 const myDB = require('./connection');
 const session = require("express-session");
 const passport = require("passport");
-
-const routes = require('./routes.js');
 const auth = require("./auth.js");
+const routes = require('./routes.js');
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
-
-const passportSocketIo = require('passport.socketio');
-const cookieParser = require('cookie-parser');
-const MongoStore = require('connect-mongo')(session);
-const URI = process.env.MONGO_URI;
-const store = new MongoStore({ url: URI });
 
 const app = express();
 
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
+const passportSocketIo = require('passport.socketio');
+const cookieParser = require('cookie-parser');
+const MongoStore = require('connect-mongo')(session);
+const URI = process.env.MONGO_URI;
+const store = new MongoStore({ url: URI });
 
 app.set('view engine', 'pug');
 app.set("views", "./views/pug");
@@ -59,11 +57,11 @@ myDB(async client => {
 
   let currentUsers = 0;
 
-  io.on("connection", socket => {
+  io.on("connection", (socket) => {
     console.log("A user has connected to socket");
     ++currentUsers;
     io.emit('user', {
-      //username: socket.request.user.username,
+      username: socket.request.user.username,
       currentUsers,
       connected: true
     });
@@ -72,7 +70,7 @@ myDB(async client => {
       console.log("User disconnected")
       --currentUsers;
       io.emit("user", {
-        //username: socket.request.user.username,
+        username: socket.request.user.username,
         currentUsers,
         connected: false
         

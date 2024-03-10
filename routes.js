@@ -14,17 +14,6 @@ module.exports = function (app, myDataBase) {
     });
   });
   
-  app.route("/login").post(passport.authenticate("local", { failureRedirect: "/" }), (req, res) => {
-    res.redirect("/profile");
-  })
-
-  app.route("/auth/github").get(passport.authenticate("github"));
-
-  app.route("/auth/github/callback").get(passport.authenticate("github", { failureRedirect: "/" }), (req, res) => {
-    req.session.user_id = req.user.id
-    res.redirect("/chat");
-  })
-
   app.route("/profile").get(ensureAuthenticated, (req, res) => {
     res.render("profile", {
       username: req.user.username
@@ -38,11 +27,16 @@ module.exports = function (app, myDataBase) {
     })
   })
   
-  
-  app.route('/logout').get((req, res) => {
-    req.logout();
-    res.redirect('/');
-  });
+  app.route("/login").post(passport.authenticate("local", { failureRedirect: "/" }), (req, res) => {
+    res.redirect("/profile");
+  })
+
+  app.route("/auth/github").get(passport.authenticate("github"));
+
+  app.route("/auth/github/callback").get(passport.authenticate("github", { failureRedirect: "/" }), (req, res) => {
+    req.session.user_id = req.user.id
+    res.redirect("/chat");
+  })
 
   app.route('/register').post(async (req, res, next) => {
     console.log("Attempting to register");
@@ -67,23 +61,28 @@ module.exports = function (app, myDataBase) {
       console.log(err);
     }
   },
-    passport.authenticate('local', { failureRedirect: '/' }),
-    (req, res, next) => {
-      console.log("Accessing user profile");
-      res.redirect('/profile');
-    }
+  passport.authenticate('local', { failureRedirect: '/' }),
+  (req, res, next) => {
+    console.log("Accessing user profile");
+    res.redirect('/profile');
+  }
   );
   
+  app.route('/logout').get((req, res) => {
+    req.logout();
+    res.redirect('/');
+  });
+
   app.use((req, res) => {
     res.status(404)
     .type('text')
     .send('Not Found');
-  });
-  
-  function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-      return next();
-    }
-    res.redirect('/');
-  };
+  });  
 }
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/');
+};
